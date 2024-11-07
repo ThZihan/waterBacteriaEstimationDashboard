@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Water Quality Monitoring & Estimated Bacteria Projection</title>
+  <title>RAS Monitoring System Dashboard</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -70,12 +70,71 @@
       align-items: center;
       justify-content: center;
     }
+    .footer {
+      margin-top: 40px;
+      padding: 15px;
+      background-color: #333;
+      color: #f0f8ff;
+      width: 100%;
+      text-align: center;
+      font-size: 0.9em;
+    }
+    .project-info {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      margin: 20px 0;
+    }
+    .project-info img {
+      width: 100px;
+      height: auto;
+    }
+    .download-container {
+      margin-top: 20px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    .download-button {
+      padding: 10px 20px;
+      background-color: #0066cc;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .download-button:hover {
+      background-color: #004999;
+    }
   </style>
   <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css"/>
 </head>
 <body>
 
-<h1>Water Quality Monitoring & Estimated Bacteria Projection</h1>
+<h1>RAS Monitoring System Dashboard</h1>
+
+<div class="project-info">
+  <img src="image/fablab.png" alt="FabLab IUB Logo">
+  <div>
+    <p>Developed by FabLab IUB</p>
+    <p>A joint project by IUB & SAU</p>
+  </div>
+  <img src="image/iub.png" alt="IUB Logo">
+  <img src="image/sau.png" alt="SAU Logo">
+</div>
+
+<div class="download-container">
+  <label for="datepicker-start">Start Date:</label>
+  <input type="text" id="datepicker-start" name="start">
+  <label for="datepicker-end">End Date:</label>
+  <input type="text" id="datepicker-end" name="end">
+  <button class="download-button" onclick="downloadData()">Download Data</button>
+  <a href="https://api.thingspeak.com/channels/2732596/feeds.csv?api_key=5FQDTVP1SQE5WKRI&results=999999" class="download-button" download>Download Summary</a>
+</div>
+
 <div class="info-box" id="bacteriaInfo"></div>
 
 <div class="parameter-container" id="latestData"></div>
@@ -84,13 +143,23 @@
   <div id="temperatureChart"></div>
   <div id="phChart"></div>
   <div id="turbidityChart"></div>
+  <div id="DOChart"></div>
+  <div id="ECChart"></div>
+  <div id="ORPChart"></div>
   <div id="TDSChart"></div>
-  <div id="BacteriaPercentageChart"></div>
+</div>
+
+<div class="footer">
+  <p>© 2024 RAS Monitoring System - A Collaborative Project Developed by IUB & SAU</p>
 </div>
 
 <script>
+  $(function() {
+    $("#datepicker-start, #datepicker-end").datepicker();
+  });
+
   async function fetchData() {
-    const response = await fetch('https://api.thingspeak.com/channels/2725180/feeds.json?results=60');
+    const response = await fetch('https://api.thingspeak.com/channels/2732596/feeds.json?results=60');
     const data = await response.json();
     return data;
   }
@@ -99,19 +168,25 @@
     let min, max;
     if (parameter === 'temperature') {
       min = 20;
-      max = 40;
+      max = 30;
     } else if (parameter === 'ph') {
       min = 6.5;
-      max = 7.5;
+      max = 8.5;
     } else if (parameter === 'turbidity') {
+      min = 0;
+      max = 5;
+    } else if (parameter === 'do') {
       min = 5;
       max = 10;
+    } else if (parameter === 'ec') {
+      min = 500;
+      max = 2000;
+    } else if (parameter === 'orp') {
+      min = 250;
+      max = 400;
     } else if (parameter === 'tds') {
-      min = 200;
+      min = 300;
       max = 1000;
-    } else if (parameter === 'bacteria') {
-      min = 0;
-      max = 50;
     }
 
     if (value < min) {
@@ -126,11 +201,13 @@
   function displayLatestData(latest) {
     const container = document.getElementById('latestData');
     container.innerHTML = `
-      <div class="parameter" style="background: ${getGradientColor(latest.field1, 'temperature')}">Temperature: ${latest.field1} °C</div>
-      <div class="parameter" style="background: ${getGradientColor(latest.field2, 'ph')}">pH: ${latest.field2}</div>
-      <div class="parameter" style="background: ${getGradientColor(latest.field3, 'turbidity')}">Turbidity: ${latest.field3} NTU</div>
-      <div class="parameter" style="background: ${getGradientColor(latest.field4, 'tds')}">TDS: ${latest.field4} PPM</div>
-      <div class="parameter" style="background: ${getGradientColor(latest.field5, 'bacteria')}">Bacteria Percentage: ${parseFloat(latest.field5)} %</div>
+      <div class="parameter" style="background: ${getGradientColor(latest.field5, 'temperature')}">Temperature: ${latest.field5} °C</div>
+      <div class="parameter" style="background: ${getGradientColor(latest.field1, 'ph')}">pH: ${latest.field1}</div>
+      <div class="parameter" style="background: ${getGradientColor(latest.field2, 'turbidity')}">Turbidity: ${latest.field2} NTU</div>
+      <div class="parameter" style="background: ${getGradientColor(latest.field3, 'do')}">DO: ${latest.field3} mg/L</div>
+      <div class="parameter" style="background: ${getGradientColor(latest.field4, 'ec')}">EC: ${latest.field4} µS/cm</div>
+      <div class="parameter" style="background: ${getGradientColor(latest.field6, 'orp')}">ORP: ${latest.field6} mV</div>
+      <div class="parameter" style="background: ${getGradientColor(latest.field7, 'tds')}">TDS: ${latest.field7} PPM</div>
     `;
   }
 
@@ -162,54 +239,87 @@
   function updateCharts(data) {
     const feeds = data.feeds.slice(-20); // Latest 20 entries
 
-    plotChart(feeds.map(f => ({ created_at: f.created_at, value: f.field1 })),
+    plotChart(feeds.map(f => ({ created_at: f.created_at, value: f.field5 })),
             "Temperature (°C)", "temperatureChart", "Temperature (°C)");
-    plotChart(feeds.map(f => ({ created_at: f.created_at, value: f.field2 })),
+    plotChart(feeds.map(f => ({ created_at: f.created_at, value: f.field1 })),
             "pH Level", "phChart", "pH Level");
-    plotChart(feeds.map(f => ({ created_at: f.created_at, value: f.field3 })),
+    plotChart(feeds.map(f => ({ created_at: f.created_at, value: f.field2 })),
             "Turbidity (NTU)", "turbidityChart", "Turbidity (NTU)");
+    plotChart(feeds.map(f => ({ created_at: f.created_at, value: f.field3 })),
+            "Dissolved Oxygen (mg/L)", "DOChart", "Dissolved Oxygen (mg/L)");
     plotChart(feeds.map(f => ({ created_at: f.created_at, value: f.field4 })),
+            "Electrical Conductivity (µS/cm)", "ECChart", "Electrical Conductivity (µS/cm)");
+    plotChart(feeds.map(f => ({ created_at: f.created_at, value: f.field6 })),
+            "ORP (mV)", "ORPChart", "ORP (mV)");
+    plotChart(feeds.map(f => ({ created_at: f.created_at, value: f.field7 })),
             "TDS (PPM)", "TDSChart", "TDS (PPM)");
-    plotChart(feeds.map(f => ({ created_at: f.created_at, value: parseFloat(f.field5) })),
-            "Bacteria Percentage (%)", "BacteriaPercentageChart", "Bacteria Percentage (%)");
   }
 
   function displayBacterialGrowthInfo(latest) {
-    const temperature = parseFloat(latest.field1);
-    const pH = parseFloat(latest.field2);
-    const turbidity = parseFloat(latest.field3);
-    const tds = parseFloat(latest.field4);
-    const bacteriaPercentage = parseFloat(latest.field5);
+    const temperature = parseFloat(latest.field5);
+    const pH = parseFloat(latest.field1);
+    const turbidity = parseFloat(latest.field2);
+    const tds = parseFloat(latest.field7);
+    const doLevel = parseFloat(latest.field3);
+    const ec = parseFloat(latest.field4);
+    const orp = parseFloat(latest.field6);
 
-    let infoText = "<h2>Ideal Conditions for Bacterial Growth</h2>";
-    if (temperature >= 20 && temperature <= 40) {
-      infoText += `<p>✅ Temperature (${temperature} °C) is ideal for bacterial growth.</p>`;
+    let infoText = "<h2>Ideal Conditions for RAS Environment</h2>";
+    if (temperature >= 20 && temperature <= 30) {
+      infoText += `<p>✅ Temperature (${temperature} °C) is ideal for the RAS environment.</p>`;
     } else {
-      infoText += `<p>⚠️ Temperature (${temperature} °C) is not optimal for bacterial growth.</p>`;
+      infoText += `<p>⚠️ Temperature (${temperature} °C) is not optimal for the RAS environment.</p>`;
     }
 
-    if (pH >= 6.5 && pH <= 7.5) {
-      infoText += `<p>✅ pH level (${pH}) is suitable for bacterial growth.</p>`;
+    if (pH >= 6.5 && pH <= 8.5) {
+      infoText += `<p>✅ pH level (${pH}) is suitable for the RAS environment.</p>`;
     } else {
-      infoText += `<p>⚠️ pH level (${pH}) is not within the ideal range for bacterial growth.</p>`;
+      infoText += `<p>⚠️ pH level (${pH}) is not within the ideal range for the RAS environment.</p>`;
     }
 
-    if (turbidity >= 5) {
-      infoText += `<p>✅ Turbidity (${turbidity} NTU) indicates a favourable environment for bacterial presence.</p>`;
+    if (turbidity <= 5) {
+      infoText += `<p>✅ Turbidity (${turbidity} NTU) is within an acceptable range for the RAS environment.</p>`;
     } else {
-      infoText += `<p>⚠️ Turbidity (${turbidity} NTU) is too low for significant bacterial growth.</p>`;
+      infoText += `<p>⚠️ Turbidity (${turbidity} NTU) is too high for optimal RAS performance.</p>`;
     }
 
-    if (tds >= 200 && tds <= 1000) {
-      infoText += `<p>✅ TDS (${tds} PPM) is within the range that can support bacterial growth.</p>`;
+    if (tds >= 300 && tds <= 1000) {
+      infoText += `<p>✅ TDS (${tds} PPM) is within the ideal range for the RAS environment.</p>`;
     } else {
-      infoText += `<p>⚠️ TDS (${tds} PPM) is not ideal for bacterial growth.</p>`;
+      infoText += `<p>⚠️ TDS (${tds} PPM) is not ideal for the RAS environment.</p>`;
     }
 
-    infoText += `<h3>Bacteria Percentage: ${bacteriaPercentage} %</h3>`;
+    if (doLevel >= 5 && doLevel <= 10) {
+      infoText += `<p>✅ Dissolved Oxygen (${doLevel} mg/L) is within the optimal range for the RAS environment.</p>`;
+    } else {
+      infoText += `<p>⚠️ Dissolved Oxygen (${doLevel} mg/L) is not within the optimal range for the RAS environment.</p>`;
+    }
+
+    if (ec >= 500 && ec <= 2000) {
+      infoText += `<p>✅ Electrical Conductivity (${ec} µS/cm) is within the ideal range for the RAS environment.</p>`;
+    } else {
+      infoText += `<p>⚠️ Electrical Conductivity (${ec} µS/cm) is not within the ideal range for the RAS environment.</p>`;
+    }
+
+    if (orp >= 250 && orp <= 400) {
+      infoText += `<p>✅ ORP (${orp} mV) is within the ideal range for the RAS environment.</p>`;
+    } else {
+      infoText += `<p>⚠️ ORP (${orp} mV) is not within the ideal range for the RAS environment.</p>`;
+    }
 
     const infoBox = document.getElementById('bacteriaInfo');
     infoBox.innerHTML = infoText;
+  }
+
+  function downloadData() {
+    const startDate = document.getElementById('datepicker-start').value;
+    const endDate = document.getElementById('datepicker-end').value;
+    const formattedStartDate = new Date(startDate).toISOString().split('T')[0] + ' 00:00:00';
+    const formattedEndDate = new Date(endDate).toISOString().split('T')[0] + ' 23:59:00';
+    const timezone = 'Asia/Dhaka';
+    const apiKey = '5FQDTVP1SQE5WKRI';
+    const downloadLink = `https://api.thingspeak.com/channels/2732596/feeds.csv?start=${formattedStartDate}&end=${formattedEndDate}&timezone=${timezone}&api_key=${apiKey}`;
+    window.open(downloadLink, '_blank');
   }
 
   async function init() {
