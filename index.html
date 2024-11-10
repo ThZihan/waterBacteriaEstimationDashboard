@@ -18,30 +18,6 @@
       color: #0066cc;
       margin-bottom: 10px;
     }
-    .hero {
-      width: 100%;
-      /*max-width: 1300px;*/
-      background: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.5)), url('image/rasHero.jpg') no-repeat center center/cover;
-      color: #0066cc;
-      text-align: center;
-      padding: 100px 20px;
-      border-radius: 10px;
-      margin-bottom: 30px;
-
-    }
-    .hero h2 {
-      font-size: 2.5em;
-      margin-bottom: 10px;
-      text-shadow: -2px 2px 3px rgba(0,100,98,1);
-    }
-    .hero p {
-      font-size: 1.2em;
-      line-height: 1.5;
-      text-shadow: 0px 2px 0px rgba(0,0,0,1);
-    }
-    .hero h5{
-      text-shadow: 0px 2px 0px rgba(0,0,0,1);
-    }
     .chart-container {
       width: 95%;
       max-width: 1200px;
@@ -130,41 +106,6 @@
     .download-button:hover {
       background-color: #004999;
     }
-    .hardware-section, .team-section {
-      width: 95%;
-      max-width: 1200px;
-      margin-top: 30px;
-      padding: 20px;
-      background-color: #ffffff;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-      border-radius: 8px;
-    }
-    .hardware-section h2, .team-section h2 {
-      color: #0066cc;
-      margin-bottom: 15px;
-    }
-    .hardware-list, .team-list {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 20px;
-      align-items: center;
-    }
-    .hardware-item, .team-member {
-      flex: 1;
-      min-width: 200px;
-      text-align: center;
-    }
-    .hardware-item img, .team-member img {
-      width: 150px;
-      height: 150px;
-      object-fit: cover;
-      border-radius: 50%;
-      margin-bottom: 10px;
-    }
-    .team-member p, .hardware-item p {
-      font-size: 1em;
-      color: #333;
-    }
   </style>
   <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
@@ -173,23 +114,16 @@
 </head>
 <body>
 
-<div class="hero">
-  <h2>Welcome to the RAS Monitoring Dashboard</h2>
-  <p>Efficiently monitoring the Recirculating Aquaculture System (RAS) with real-time data visualization and insights. </p>
-  <p>Developed by FabLab IUB in collaboration with Department of Aquaculture Sher-e Bangla Agricultural University.</p>
-  <h5>This dashboard is under development to ensure optimal conditions for aquatic life, maximizing productivity and sustainability.</h5>
-</div>
-
-<!--<h1>RAS Monitoring System Dashboard</h1>-->
+<h1>RAS Monitoring System Dashboard</h1>
 
 <div class="project-info">
-  <img src="image/fablab.png" alt="FabLab IUB Logo">
+  <img src="path/to/fablab_logo.png" alt="FabLab IUB Logo">
   <div>
     <p>Developed by FabLab IUB</p>
     <p>A joint project by IUB & SAU</p>
   </div>
-  <img src="image/iub.png" alt="IUB Logo">
-  <img src="image/sau.png" alt="SAU Logo">
+  <img src="path/to/iub_logo.png" alt="IUB Logo">
+  <img src="path/to/sau_logo.png" alt="SAU Logo">
 </div>
 
 <div class="download-container">
@@ -213,41 +147,6 @@
   <div id="ECChart"></div>
   <div id="ORPChart"></div>
   <div id="TDSChart"></div>
-</div>
-<div class="hardware-section">
-  <h2>Hardware Used in RAS Monitoring System</h2>
-  <div class="hardware-list">
-    <div class="hardware-item">
-      <img src="path/to/hardware1.jpg" alt="Hardware 1">
-      <p>Sensor 1: Description of Sensor 1</p>
-    </div>
-    <div class="hardware-item">
-      <img src="path/to/hardware2.jpg" alt="Hardware 2">
-      <p>Sensor 2: Description of Sensor 2</p>
-    </div>
-    <div class="hardware-item">
-      <img src="path/to/hardware3.jpg" alt="Hardware 3">
-      <p>Controller: Description of Controller</p>
-    </div>
-  </div>
-</div>
-
-<div class="team-section">
-  <h2>Meet the Team</h2>
-  <div class="team-list">
-    <div class="team-member">
-      <img src="path/to/member1.jpg" alt="Team Member 1">
-      <p>Team Member 1: Role</p>
-    </div>
-    <div class="team-member">
-      <img src="path/to/member2.jpg" alt="Team Member 2">
-      <p>Team Member 2: Role</p>
-    </div>
-    <div class="team-member">
-      <img src="path/to/member3.jpg" alt="Team Member 3">
-      <p>Team Member 3: Role</p>
-    </div>
-  </div>
 </div>
 
 <div class="footer">
