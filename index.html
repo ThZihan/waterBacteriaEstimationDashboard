@@ -14,28 +14,32 @@
       align-items: center;
       padding: 20px;
     }
+
     h1 {
       color: #0066cc;
       margin-bottom: 10px;
     }
+
     .chart-container {
       width: 95%;
       max-width: 1200px;
       margin-top: 30px;
-      display: flex;
-      flex-wrap: wrap;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
       gap: 20px;
     }
+
     .chart-container > div {
-      flex: 1;
-      min-width: 400px;
+      min-width: 300px;
       margin-bottom: 20px;
     }
+
     @media (max-width: 800px) {
       .chart-container > div {
         min-width: 100%;
       }
     }
+
     .info-box {
       margin-top: 20px;
       padding: 15px;
@@ -45,21 +49,22 @@
       width: 95%;
       max-width: 1200px;
     }
+
     .info-box p {
       margin: 10px 0;
       font-size: 0.9em;
     }
+
     .parameter-container {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 10px;
       margin: 20px 0;
       width: 95%;
       max-width: 1200px;
-      gap: 10px;
     }
+
     .parameter {
-      flex: 1;
       padding: 15px;
       border-radius: 8px;
       color: #ffffff;
@@ -70,6 +75,7 @@
       align-items: center;
       justify-content: center;
     }
+
     .footer {
       margin-top: 40px;
       padding: 15px;
@@ -79,22 +85,44 @@
       text-align: center;
       font-size: 0.9em;
     }
+
     .project-info {
       display: flex;
       align-items: center;
       gap: 20px;
       margin: 20px 0;
     }
+
     .project-info img {
       width: 100px;
       height: auto;
     }
+
     .download-container {
       margin-top: 20px;
-      display: flex;
-      align-items: center;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
       gap: 15px;
+      align-items: center;
+      width: 95%;
+      max-width: 1200px;
     }
+
+    .download-container div {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .download-container label {
+      margin-bottom: 5px;
+    }
+
+    .download-container input {
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
     .download-button {
       padding: 10px 20px;
       background-color: #0066cc;
@@ -102,10 +130,38 @@
       border: none;
       border-radius: 5px;
       cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
     }
+
     .download-button:hover {
       background-color: #004999;
     }
+
+    @media (max-width: 600px) {
+      .download-container {
+        grid-template-columns: 1fr;
+        text-align: center;
+      }
+
+      .download-button {
+        width: 100%;
+      }
+
+      .project-info {
+        flex-direction: column;
+      }
+
+      .chart-container {
+        grid-template-columns: 1fr;
+      }
+
+      .parameter-container {
+        grid-template-columns: 1fr;
+      }
+    }
+
   </style>
   <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
@@ -127,13 +183,18 @@
 </div>
 
 <div class="download-container">
-  <label for="datepicker-start">Start Date:</label>
-  <input type="text" id="datepicker-start" name="start">
-  <label for="datepicker-end">End Date:</label>
-  <input type="text" id="datepicker-end" name="end">
+  <div>
+    <label for="datepicker-start">Start Date:</label>
+    <input type="text" id="datepicker-start" name="start">
+  </div>
+  <div>
+    <label for="datepicker-end">End Date:</label>
+    <input type="text" id="datepicker-end" name="end">
+  </div>
   <button class="download-button" onclick="downloadData()">Download Data</button>
   <a href="https://api.thingspeak.com/channels/2732596/feeds.csv?api_key=5FQDTVP1SQE5WKRI&results=999999" class="download-button" download>Download Summary</a>
 </div>
+
 
 <div class="info-box" id="bacteriaInfo"></div>
 
