@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>RAS Monitoring System Dashboard</title>
+
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -226,7 +227,7 @@
 <div class="main-content">
   <h2>Real Time Data from Tank</h2>
   <div class="parameter-container" id="latestData"></div>
-  <div class="info-box" id="bacteriaInfo"></div>
+  <div class="info-box" id="dataInfo"></div>
 
   <div class="download-container">
     <div>
@@ -278,36 +279,62 @@
   }
 
   function getGradientColor(value, parameter) {
-    let min, max;
-    if (parameter === 'temperature') {
-      min = 20;
-      max = 30;
-    } else if (parameter === 'ph') {
-      min = 6.5;
-      max = 8.5;
-    } else if (parameter === 'turbidity') {
-      min = 0;
-      max = 5;
-    } else if (parameter === 'do') {
-      min = 5;
-      max = 10;
-    } else if (parameter === 'ec') {
-      min = 500;
-      max = 2000;
-    } else if (parameter === 'orp') {
-      min = 250;
-      max = 400;
-    } else if (parameter === 'tds') {
-      min = 300;
-      max = 1000;
+    let idealMin, idealMax, warningMin, warningMax;
+
+    // Define ideal and warning ranges for each parameter
+    switch (parameter) {
+      case 'temperature':
+        idealMin = 24;
+        idealMax = 28;
+        warningMin = 20;
+        warningMax = 30;
+        break;
+      case 'ph':
+        idealMin = 7.0;
+        idealMax = 8.0;
+        warningMin = 6.5;
+        warningMax = 8.5;
+        break;
+      case 'turbidity':
+        idealMin = 0;
+        idealMax = 2;
+        warningMin = 2;
+        warningMax = 5;
+        break;
+      case 'do':
+        idealMin = 6.5;
+        idealMax = 8.5;
+        warningMin = 5;
+        warningMax = 10;
+        break;
+      case 'ec':
+        idealMin = 800;
+        idealMax = 1500;
+        warningMin = 500;
+        warningMax = 2000;
+        break;
+      case 'orp':
+        idealMin = 300;
+        idealMax = 350;
+        warningMin = 250;
+        warningMax = 400;
+        break;
+      case 'tds':
+        idealMin = 400;
+        idealMax = 800;
+        warningMin = 300;
+        warningMax = 1000;
+        break;
     }
 
-    if (value < min) {
-      return 'rgb(255, 0, 0)'; // Red for values below the ideal range
-    } else if (value > max) {
-      return 'rgb(255, 165, 0)'; // Orange for values above the ideal range
+    // Improved condition checking
+    if (value >= idealMin && value <= idealMax) {
+      return 'rgb(40, 167, 69)';  // Green for ideal range
+    } else if ((value > idealMax && value <= warningMax) ||
+            (value >= warningMin && value < idealMin)) {
+      return 'rgb(255, 165, 0)';  // Orange for warning range
     } else {
-      return 'rgb(0, 128, 0)'; // Green for values within the ideal range
+      return 'rgb(220, 53, 69)';  // Red for out of acceptable range
     }
   }
 
@@ -368,7 +395,7 @@
             "TDS (PPM)", "TDSChart", "TDS (PPM)");
   }
 
-  function displayBacterialGrowthInfo(latest) {
+  function displayAllData(latest) {
     const temperature = parseFloat(latest.field5);
     const pH = parseFloat(latest.field1);
     const turbidity = parseFloat(latest.field2);
@@ -378,49 +405,71 @@
     const orp = parseFloat(latest.field6);
 
     let infoText = "<h2>Comparison of Ideal Conditions for RAS Environment</h2>";
-    if (temperature >= 20 && temperature <= 30) {
+
+    // Temperature
+    if (temperature >= 24 && temperature <= 28) {
       infoText += `<p>✅ Temperature (${temperature} °C) is ideal for the RAS environment.</p>`;
+    } else if ((temperature > 28 && temperature <= 30) || (temperature >= 20 && temperature < 24)) {
+      infoText += `<p>⚠️ Temperature (${temperature} °C) needs attention - outside optimal range but still acceptable.</p>`;
     } else {
-      infoText += `<p>⚠️ Temperature (${temperature} °C) is not optimal for the RAS environment.</p>`;
+      infoText += `<p>❌ Temperature (${temperature} °C) is critically outside safe range for RAS environment.</p>`;
     }
 
-    if (pH >= 6.5 && pH <= 8.5) {
-      infoText += `<p>✅ pH level (${pH}) is suitable for the RAS environment.</p>`;
+    // pH
+    if (pH >= 7.0 && pH <= 8.0) {
+      infoText += `<p>✅ pH level (${pH}) is ideal for the RAS environment.</p>`;
+    } else if ((pH > 8.0 && pH <= 8.5) || (pH >= 6.5 && pH < 7.0)) {
+      infoText += `<p>⚠️ pH level (${pH}) needs attention - outside optimal range but still acceptable.</p>`;
     } else {
-      infoText += `<p>⚠️ pH level (${pH}) is not within the ideal range for the RAS environment.</p>`;
+      infoText += `<p>❌ pH level (${pH}) is critically outside safe range for RAS environment.</p>`;
     }
 
-    if (turbidity <= 5) {
-      infoText += `<p>✅ Turbidity (${turbidity} NTU) is within an acceptable range for the RAS environment.</p>`;
+    // Turbidity
+    if (turbidity >= 0 && turbidity <= 2) {
+      infoText += `<p>✅ Turbidity (${turbidity} NTU) is ideal for the RAS environment.</p>`;
+    } else if (turbidity > 2 && turbidity <= 5) {
+      infoText += `<p>⚠️ Turbidity (${turbidity} NTU) needs attention - higher than optimal but still acceptable.</p>`;
     } else {
-      infoText += `<p>⚠️ Turbidity (${turbidity} NTU) is too high for optimal RAS performance.</p>`;
+      infoText += `<p>❌ Turbidity (${turbidity} NTU) is too high for safe RAS operation.</p>`;
     }
 
-    if (tds >= 300 && tds <= 1000) {
-      infoText += `<p>✅ TDS (${tds} PPM) is within the ideal range for the RAS environment.</p>`;
+    // TDS
+    if (tds >= 400 && tds <= 800) {
+      infoText += `<p>✅ TDS (${tds} PPM) is ideal for the RAS environment.</p>`;
+    } else if ((tds > 800 && tds <= 1000) || (tds >= 300 && tds < 400)) {
+      infoText += `<p>⚠️ TDS (${tds} PPM) needs attention - outside optimal range but still acceptable.</p>`;
     } else {
-      infoText += `<p>⚠️ TDS (${tds} PPM) is not ideal for the RAS environment.</p>`;
+      infoText += `<p>❌ TDS (${tds} PPM) is critically outside safe range for RAS environment.</p>`;
     }
 
-    if (doLevel >= 5 && doLevel <= 10) {
-      infoText += `<p>✅ Dissolved Oxygen (${doLevel} mg/L) is within the optimal range for the RAS environment.</p>`;
+    // Dissolved Oxygen
+    if (doLevel >= 6.5 && doLevel <= 8.5) {
+      infoText += `<p>✅ Dissolved Oxygen (${doLevel} mg/L) is ideal for the RAS environment.</p>`;
+    } else if ((doLevel > 8.5 && doLevel <= 10) || (doLevel >= 5 && doLevel < 6.5)) {
+      infoText += `<p>⚠️ Dissolved Oxygen (${doLevel} mg/L) needs attention - outside optimal range but still acceptable.</p>`;
     } else {
-      infoText += `<p>⚠️ Dissolved Oxygen (${doLevel} mg/L) is not within the optimal range for the RAS environment.</p>`;
+      infoText += `<p>❌ Dissolved Oxygen (${doLevel} mg/L) is critically outside safe range for RAS environment.</p>`;
     }
 
-    if (ec >= 500 && ec <= 2000) {
-      infoText += `<p>✅ Electrical Conductivity (${ec} µS/cm) is within the ideal range for the RAS environment.</p>`;
+    // Electrical Conductivity
+    if (ec >= 800 && ec <= 1500) {
+      infoText += `<p>✅ Electrical Conductivity (${ec} µS/cm) is ideal for the RAS environment.</p>`;
+    } else if ((ec > 1500 && ec <= 2000) || (ec >= 500 && ec < 800)) {
+      infoText += `<p>⚠️ Electrical Conductivity (${ec} µS/cm) needs attention - outside optimal range but still acceptable.</p>`;
     } else {
-      infoText += `<p>⚠️ Electrical Conductivity (${ec} µS/cm) is not within the ideal range for the RAS environment.</p>`;
+      infoText += `<p>❌ Electrical Conductivity (${ec} µS/cm) is critically outside safe range for RAS environment.</p>`;
     }
 
-    if (orp >= 250 && orp <= 400) {
-      infoText += `<p>✅ ORP (${orp} mV) is within the ideal range for the RAS environment.</p>`;
+    // ORP
+    if (orp >= 300 && orp <= 350) {
+      infoText += `<p>✅ ORP (${orp} mV) is ideal for the RAS environment.</p>`;
+    } else if ((orp > 350 && orp <= 400) || (orp >= 250 && orp < 300)) {
+      infoText += `<p>⚠️ ORP (${orp} mV) needs attention - outside optimal range but still acceptable.</p>`;
     } else {
-      infoText += `<p>⚠️ ORP (${orp} mV) is not within the ideal range for the RAS environment.</p>`;
+      infoText += `<p>❌ ORP (${orp} mV) is critically outside safe range for RAS environment.</p>`;
     }
 
-    const infoBox = document.getElementById('bacteriaInfo');
+    const infoBox = document.getElementById('dataInfo');
     infoBox.innerHTML = infoText;
   }
 
@@ -440,7 +489,7 @@
     const latest = data.feeds[data.feeds.length - 1];
     displayLatestData(latest);
     updateCharts(data);
-    displayBacterialGrowthInfo(latest);
+    displayAllData(latest);
   }
 
   // Refresh data every 60 seconds
