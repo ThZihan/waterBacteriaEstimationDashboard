@@ -96,25 +96,6 @@
       grid-column: span 2;
     }
 
-    @media (max-width: 800px) {
-      .hero .title{
-        font-size: 1.5rem;
-      }
-      .hero .title.t2{
-        font-size: 1rem;
-      }
-      .environmental-data {
-        width: 40%;
-      }
-      .chart-container {
-        grid-template-columns: 1fr;
-      }
-
-      .chart-container > div:last-child {
-        grid-column: span 1;
-      }
-    }
-
     .info-box p {
       margin: 10px 0;
       font-size: 0.9em;
@@ -202,6 +183,36 @@
 
     .download-button:hover {
       background-color: #004999;
+    }
+
+    @media (max-width: 800px) {
+      .hero .title{
+        margin-top: 50px;
+        font-size: 1.5rem;
+      }
+      .hero .title.t2{
+        font-size: 1rem;
+      }
+      .environmental-data {
+        width: 40%;
+      }
+      .chart-container {
+        grid-template-columns: 1fr;
+      }
+
+      .chart-container > div:last-child {
+        grid-column: span 1;
+      }
+      .project-info img{
+        width: 50px;
+      }
+      .project-info{
+        font-size: 10px;
+      }
+      .parameter {
+        padding: 10px;
+        height: 25px;
+      }
     }
   </style>
   <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
