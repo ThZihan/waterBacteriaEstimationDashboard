@@ -187,11 +187,11 @@
 
     @media (max-width: 800px) {
       .hero .title{
-        margin-top: 50px;
+        margin-top: 40px;
         font-size: 1.5rem;
       }
       .hero .title.t2{
-        font-size: 1rem;
+        font-size: 1.1rem;
       }
       .environmental-data {
         width: 40%;
@@ -212,6 +212,12 @@
       .parameter {
         padding: 10px;
         height: 25px;
+      }
+      .parameter:last-child {
+        grid-column: span 2;
+      }
+      .hero{
+        height: 330px;
       }
     }
   </style>
@@ -368,8 +374,15 @@
 
     const layout = {
       title: title,
-      xaxis: { title: 'Timestamp', tickangle: 45 },
-      yaxis: { title: yAxisLabel },
+      xaxis: {
+        title: 'Timestamp',
+        tickangle: 45,
+        fixedrange: window.innerWidth <= 800 // Disable zooming on mobile
+      },
+      yaxis: {
+        title: yAxisLabel,
+        fixedrange: window.innerWidth <= 800 // Disable zooming on mobile
+      },
       margin: { t: 40, l: 50, r: 20, b: 80 },
       plot_bgcolor: "#f0f8ff",
       paper_bgcolor: "#ffffff",
@@ -384,7 +397,10 @@
       line: { shape: 'spline', smoothing: 1.3 }
     };
 
-    Plotly.newPlot(chartDiv, [trace], layout, { responsive: true });
+    Plotly.newPlot(chartDiv, [trace], layout, {
+      responsive: true,
+      staticPlot: window.innerWidth <= 800 // Make completely static on mobile
+    });
   }
 
   function updateCharts(data) {
