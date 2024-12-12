@@ -302,46 +302,46 @@
     // Define ideal and warning ranges for each parameter
     switch (parameter) {
       case 'temperature':
-        idealMin = 24;
-        idealMax = 28;
+        idealMin = 26;
+        idealMax = 30;
         warningMin = 20;
-        warningMax = 30;
+        warningMax = 32;
         break;
       case 'ph':
-        idealMin = 7.0;
-        idealMax = 8.0;
-        warningMin = 6.5;
-        warningMax = 8.5;
+        idealMin = 6.50;
+        idealMax = 8.5;
+        warningMin = 6.0;
+        warningMax = 9.0;
         break;
       case 'turbidity':
-        idealMin = 0;
-        idealMax = 2;
+        idealMin = 3;
+        idealMax = 10;
         warningMin = 2;
-        warningMax = 5;
+        warningMax = 100;
         break;
       case 'do':
-        idealMin = 6.5;
-        idealMax = 8.5;
-        warningMin = 5;
+        idealMin = 5;
+        idealMax = 7;
+        warningMin = 6;
         warningMax = 10;
         break;
       case 'ec':
-        idealMin = 800;
-        idealMax = 1500;
-        warningMin = 500;
-        warningMax = 2000;
+        idealMin = 50;
+        idealMax = 200;
+        warningMin = 40;
+        warningMax = 600;
         break;
       case 'orp':
-        idealMin = 300;
-        idealMax = 350;
-        warningMin = 250;
-        warningMax = 400;
+        idealMin = 250;
+        idealMax = 400;
+        warningMin = 200;
+        warningMax = 500;
         break;
       case 'tds':
-        idealMin = 400;
-        idealMax = 800;
-        warningMin = 300;
-        warningMax = 1000;
+        idealMin = 50;
+        idealMax = 300;
+        warningMin = 0;
+        warningMax = 500;
         break;
     }
 
